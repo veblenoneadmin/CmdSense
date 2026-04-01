@@ -19,7 +19,25 @@ import {
   Cog,
   Code,
   Target,
+  Building2,
+  ChevronDown,
 } from 'lucide-react'
+import { useState } from 'react'
+
+const companies = [
+  { id: 'veblen', name: 'Veblen', color: '#D4845A' },
+  { id: 'talentport', name: 'TalentPort', color: '#3B82F6' },
+  { id: 'lcmb', name: 'LCMB', color: '#10B981' },
+]
+
+const executives = [
+  { id: 'ceo', label: 'CEO', icon: Crown, color: '#F59E0B', description: 'Chief Executive' },
+  { id: 'cfo', label: 'CFO', icon: DollarSign, color: '#10B981', description: 'Chief Financial' },
+  { id: 'cmo', label: 'CMO', icon: Megaphone, color: '#8B5CF6', description: 'Chief Marketing' },
+  { id: 'coo', label: 'COO', icon: Cog, color: '#EC4899', description: 'Chief Operations' },
+  { id: 'cto', label: 'CTO', icon: Code, color: '#3B82F6', description: 'Chief Technology' },
+  { id: 'cro', label: 'CRO', icon: Target, color: '#EF4444', description: 'Chief Revenue' },
+]
 
 const platforms = [
   { id: 'eversense', label: 'EverSense', icon: Clock, color: '#5B9BD5', description: 'Time & Projects', port: 3200 },
@@ -37,15 +55,6 @@ const navItems = [
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
 
-const executives = [
-  { id: 'ceo', label: 'CEO', icon: Crown, color: '#F59E0B', description: 'Chief Executive' },
-  { id: 'cfo', label: 'CFO', icon: DollarSign, color: '#10B981', description: 'Chief Financial' },
-  { id: 'cmo', label: 'CMO', icon: Megaphone, color: '#8B5CF6', description: 'Chief Marketing' },
-  { id: 'coo', label: 'COO', icon: Cog, color: '#EC4899', description: 'Chief Operations' },
-  { id: 'cto', label: 'CTO', icon: Code, color: '#3B82F6', description: 'Chief Technology' },
-  { id: 'cro', label: 'CRO', icon: Target, color: '#EF4444', description: 'Chief Revenue' },
-]
-
 interface SidebarProps {
   activeView: string
   onNavigate: (view: string) => void
@@ -54,6 +63,9 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }: SidebarProps) {
+  const [selectedCompany, setSelectedCompany] = useState(companies[0])
+  const [companyDropdownOpen, setCompanyDropdownOpen] = useState(false)
+
   return (
     <aside style={{
       width: collapsed ? 72 : 260,
@@ -120,8 +132,191 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }:
         )}
       </div>
 
+      {/* Company Selector */}
+      <div style={{
+        padding: collapsed ? '12px 8px' : '12px',
+        borderBottom: '1px solid var(--border-primary)',
+        flexShrink: 0,
+        position: 'relative',
+      }}>
+        <button
+          onClick={() => !collapsed && setCompanyDropdownOpen(!companyDropdownOpen)}
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: collapsed ? '8px' : '8px 10px',
+            borderRadius: 8,
+            background: 'var(--bg-tertiary)',
+            border: '1px solid var(--border-primary)',
+            color: 'var(--text-primary)',
+            cursor: 'pointer',
+            transition: 'all 0.15s',
+            justifyContent: collapsed ? 'center' : 'flex-start',
+          }}
+        >
+          <div style={{
+            width: 28,
+            height: 28,
+            borderRadius: 7,
+            background: `${selectedCompany.color}20`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: selectedCompany.color,
+            flexShrink: 0,
+          }}>
+            <Building2 size={15} />
+          </div>
+          {!collapsed && (
+            <>
+              <div style={{ flex: 1, textAlign: 'left' }}>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>{selectedCompany.name}</div>
+              </div>
+              <ChevronDown size={14} style={{
+                color: 'var(--text-muted)',
+                transition: 'transform 0.2s',
+                transform: companyDropdownOpen ? 'rotate(180deg)' : 'rotate(0)',
+              }} />
+            </>
+          )}
+        </button>
+
+        {/* Dropdown */}
+        {companyDropdownOpen && !collapsed && (
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            left: 12,
+            right: 12,
+            background: 'var(--bg-tertiary)',
+            border: '1px solid var(--border-primary)',
+            borderRadius: 8,
+            padding: 4,
+            zIndex: 200,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+          }}>
+            {companies.map((company) => (
+              <button
+                key={company.id}
+                onClick={() => {
+                  setSelectedCompany(company)
+                  setCompanyDropdownOpen(false)
+                }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  padding: '8px 10px',
+                  borderRadius: 6,
+                  background: selectedCompany.id === company.id ? `${company.color}15` : 'transparent',
+                  color: selectedCompany.id === company.id ? company.color : 'var(--text-secondary)',
+                  fontSize: 13,
+                  fontWeight: selectedCompany.id === company.id ? 600 : 400,
+                  transition: 'background 0.15s',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedCompany.id !== company.id) e.currentTarget.style.background = 'var(--bg-hover)'
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCompany.id !== company.id) e.currentTarget.style.background = 'transparent'
+                }}
+              >
+                <div style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 6,
+                  background: `${company.color}20`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: company.color,
+                }}>
+                  <Building2 size={13} />
+                </div>
+                {company.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Navigation */}
       <nav style={{ padding: '16px 8px', flex: 1, overflowY: 'auto' }}>
+        {/* Executive — on top */}
+        <div style={{
+          fontSize: 10,
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          color: 'var(--text-muted)',
+          padding: '0 12px',
+          marginBottom: 8,
+          opacity: collapsed ? 0 : 1,
+          transition: 'opacity 0.2s',
+        }}>
+          Executive
+        </div>
+
+        {executives.map((exec) => {
+          const Icon = exec.icon
+          const isActive = activeView === exec.id
+          return (
+            <button
+              key={exec.id}
+              onClick={() => onNavigate(exec.id)}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: collapsed ? '10px 20px' : '10px 12px',
+                borderRadius: 8,
+                marginBottom: 2,
+                background: isActive ? `${exec.color}15` : 'transparent',
+                color: isActive ? exec.color : 'var(--text-secondary)',
+                fontSize: 13,
+                fontWeight: isActive ? 600 : 400,
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) e.currentTarget.style.background = 'var(--bg-hover)'
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <div style={{
+                width: 18,
+                height: 18,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <Icon size={18} />
+              </div>
+              {!collapsed && (
+                <div style={{ textAlign: 'left' }}>
+                  <div>{exec.label}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 400 }}>
+                    {exec.description}
+                  </div>
+                </div>
+              )}
+            </button>
+          )
+        })}
+
+        <div style={{
+          height: 1,
+          background: 'var(--border-primary)',
+          margin: '16px 12px',
+        }} />
+
+        {/* Navigation */}
         <div style={{
           fontSize: 10,
           fontWeight: 600,
@@ -176,6 +371,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }:
           margin: '16px 12px',
         }} />
 
+        {/* Platforms */}
         <div style={{
           fontSize: 10,
           fontWeight: 600,
@@ -243,75 +439,6 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }:
                   <div>{platform.label}</div>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 400 }}>
                     {platform.description}
-                  </div>
-                </div>
-              )}
-            </button>
-          )
-        })}
-
-        <div style={{
-          height: 1,
-          background: 'var(--border-primary)',
-          margin: '16px 12px',
-        }} />
-
-        <div style={{
-          fontSize: 10,
-          fontWeight: 600,
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          color: 'var(--text-muted)',
-          padding: '0 12px',
-          marginBottom: 8,
-          opacity: collapsed ? 0 : 1,
-          transition: 'opacity 0.2s',
-        }}>
-          Executive
-        </div>
-
-        {executives.map((exec) => {
-          const Icon = exec.icon
-          const isActive = activeView === exec.id
-          return (
-            <button
-              key={exec.id}
-              onClick={() => onNavigate(exec.id)}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                padding: collapsed ? '10px 20px' : '10px 12px',
-                borderRadius: 8,
-                marginBottom: 2,
-                background: isActive ? `${exec.color}15` : 'transparent',
-                color: isActive ? exec.color : 'var(--text-secondary)',
-                fontSize: 13,
-                fontWeight: isActive ? 600 : 400,
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) e.currentTarget.style.background = 'var(--bg-hover)'
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) e.currentTarget.style.background = 'transparent'
-              }}
-            >
-              <div style={{
-                width: 18,
-                height: 18,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                <Icon size={18} />
-              </div>
-              {!collapsed && (
-                <div style={{ textAlign: 'left' }}>
-                  <div>{exec.label}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 400 }}>
-                    {exec.description}
                   </div>
                 </div>
               )}
