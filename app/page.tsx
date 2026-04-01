@@ -15,13 +15,12 @@ import {
   Search,
   Command,
   Calendar,
-  Loader2,
 } from 'lucide-react'
 
 export default function CommandCenter() {
   const [activeView, setActiveView] = useState('dashboard')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const { data, loading, error } = useDashboardData()
+  const { data } = useDashboardData()
 
   const isPlatformView = ['eversense', 'hrsense', 'jobsense', 'contentsense', 'salesense'].includes(activeView)
   const isExecutiveView = ['ceo', 'cfo', 'cmo', 'coo', 'cto', 'cro'].includes(activeView)
@@ -168,29 +167,6 @@ export default function CommandCenter() {
             />
           ) : isExecutiveView ? (
             <ExecutiveView roleId={activeView} />
-          ) : loading ? (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 400,
-              color: 'var(--text-muted)',
-              gap: 10,
-            }}>
-              <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
-              <span style={{ fontSize: 14 }}>Loading dashboard...</span>
-            </div>
-          ) : error ? (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 400,
-              color: 'var(--error)',
-              fontSize: 14,
-            }}>
-              Failed to load data: {error}
-            </div>
           ) : (
             <div className="fade-in">
               {/* KPIs */}
@@ -198,7 +174,7 @@ export default function CommandCenter() {
                 <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: 'var(--text-secondary)' }}>
                   Key Metrics
                 </h2>
-                <KPIOverview kpis={data!.kpis} />
+                <KPIOverview kpis={data.kpis} />
               </div>
 
               {/* Platform cards */}
@@ -206,7 +182,7 @@ export default function CommandCenter() {
                 <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: 'var(--text-secondary)' }}>
                   Platforms
                 </h2>
-                <PlatformCards platforms={data!.platforms} onNavigate={setActiveView} />
+                <PlatformCards platforms={data.platforms} onNavigate={setActiveView} />
               </div>
 
               {/* Bottom grid: Activity + Charts + Quick Actions */}
@@ -217,13 +193,13 @@ export default function CommandCenter() {
                 marginBottom: 20,
               }}>
                 <RevenueChart
-                  monthlyRevenue={data!.monthlyRevenue}
-                  weeklyBreakdown={data!.weeklyBreakdown}
+                  monthlyRevenue={data.monthlyRevenue}
+                  weeklyBreakdown={data.weeklyBreakdown}
                 />
                 <QuickActions />
               </div>
 
-              <ActivityFeed activities={data!.activities} />
+              <ActivityFeed activities={data.activities} />
             </div>
           )}
         </div>

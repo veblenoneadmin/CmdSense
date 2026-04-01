@@ -10,21 +10,28 @@ export interface DashboardData {
   weeklyBreakdown: any[]
 }
 
+const emptyData: DashboardData = {
+  platforms: [],
+  kpis: [],
+  activities: [],
+  monthlyRevenue: [],
+  weeklyBreakdown: [],
+}
+
 export function useDashboardData() {
-  const [data, setData] = useState<DashboardData | null>(null)
+  const [data, setData] = useState<DashboardData>(emptyData)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/dashboard')
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch dashboard data')
+        if (!res.ok) throw new Error('Failed to fetch')
         return res.json()
       })
       .then(setData)
-      .catch((e) => setError(e.message))
+      .catch(() => {}) // keep empty data, UI still renders
       .finally(() => setLoading(false))
   }, [])
 
-  return { data, loading, error }
+  return { data, loading }
 }
