@@ -13,21 +13,10 @@ import {
 } from 'recharts'
 import { useState } from 'react'
 
-const monthlyRevenue = [
-  { month: 'Oct', revenue: 52000, jobs: 18, content: 22 },
-  { month: 'Nov', revenue: 61000, jobs: 22, content: 28 },
-  { month: 'Dec', revenue: 48000, jobs: 16, content: 20 },
-  { month: 'Jan', revenue: 67000, jobs: 24, content: 32 },
-  { month: 'Feb', revenue: 76500, jobs: 28, content: 38 },
-  { month: 'Mar', revenue: 87400, jobs: 31, content: 34 },
-]
-
-const weeklyBreakdown = [
-  { week: 'W1', jobsense: 8200, salesense: 4500, contentsense: 2100 },
-  { week: 'W2', jobsense: 9800, salesense: 6200, contentsense: 1800 },
-  { week: 'W3', jobsense: 11200, salesense: 5100, contentsense: 3200 },
-  { week: 'W4', jobsense: 10500, salesense: 7800, contentsense: 2600 },
-]
+interface RevenueChartProps {
+  monthlyRevenue: { month: string; revenue: number; jobs: number; content: number }[]
+  weeklyBreakdown: { week: string; jobsense: number; salesense: number; contentsense: number }[]
+}
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload) return null
@@ -55,7 +44,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   )
 }
 
-export default function RevenueChart() {
+export default function RevenueChart({ monthlyRevenue, weeklyBreakdown }: RevenueChartProps) {
   const [view, setView] = useState<'revenue' | 'breakdown'>('revenue')
 
   return (

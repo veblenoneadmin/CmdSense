@@ -1,84 +1,27 @@
 'use client'
 
 import {
-  DollarSign,
-  TrendingUp,
-  Clock,
-  Briefcase,
-  Users,
-  FileText,
   ArrowUpRight,
   ArrowDownRight,
 } from 'lucide-react'
+import { iconMap } from '../lib/icons'
 
-interface KPI {
+interface KPIData {
+  id: string
   label: string
   value: string
   change: string
-  changeType: 'up' | 'down' | 'neutral'
-  icon: any
+  changeType: string
+  icon: string
   color: string
   subtext: string
 }
 
-const kpis: KPI[] = [
-  {
-    label: 'Total Revenue (March)',
-    value: '$87.4K',
-    change: '+14.2%',
-    changeType: 'up',
-    icon: DollarSign,
-    color: '#4ADE80',
-    subtext: 'vs $76.5K in February',
-  },
-  {
-    label: 'Active Jobs',
-    value: '10',
-    change: '+3',
-    changeType: 'up',
-    icon: Briefcase,
-    color: '#D4845A',
-    subtext: '4 in production, 3 in edit',
-  },
-  {
-    label: 'Team Hours (This Week)',
-    value: '284h',
-    change: '+8%',
-    changeType: 'up',
-    icon: Clock,
-    color: '#5B9BD5',
-    subtext: '11 active team members',
-  },
-  {
-    label: 'Pipeline Value',
-    value: '$142K',
-    change: '+$28K',
-    changeType: 'up',
-    icon: TrendingUp,
-    color: '#E74C3C',
-    subtext: '8 open deals, 3 closing soon',
-  },
-  {
-    label: 'Content Published',
-    value: '34',
-    change: '+22%',
-    changeType: 'up',
-    icon: FileText,
-    color: '#2ECC71',
-    subtext: 'This month across all channels',
-  },
-  {
-    label: 'Team Utilization',
-    value: '86%',
-    change: '-2%',
-    changeType: 'down',
-    icon: Users,
-    color: '#9B59B6',
-    subtext: 'Target: 85% — On track',
-  },
-]
+interface KPIOverviewProps {
+  kpis: KPIData[]
+}
 
-export default function KPIOverview() {
+export default function KPIOverview({ kpis }: KPIOverviewProps) {
   return (
     <div style={{
       display: 'grid',
@@ -86,11 +29,11 @@ export default function KPIOverview() {
       gap: 12,
     }}>
       {kpis.map((kpi, index) => {
-        const Icon = kpi.icon
+        const Icon = iconMap[kpi.icon]
         const isUp = kpi.changeType === 'up'
         return (
           <div
-            key={kpi.label}
+            key={kpi.id}
             style={{
               background: 'var(--bg-card)',
               border: '1px solid var(--border-primary)',
@@ -122,7 +65,7 @@ export default function KPIOverview() {
                 justifyContent: 'center',
                 color: kpi.color,
               }}>
-                <Icon size={16} />
+                {Icon && <Icon size={16} />}
               </div>
               <div style={{
                 display: 'flex',

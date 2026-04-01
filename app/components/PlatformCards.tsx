@@ -1,109 +1,24 @@
 'use client'
 
 import {
-  Clock,
   Users,
-  Briefcase,
-  FileText,
-  TrendingUp,
   Activity,
 } from 'lucide-react'
+import { iconMap } from '../lib/icons'
 
-interface PlatformStatus {
+interface PlatformData {
   id: string
+  slug: string
   name: string
   description: string
   color: string
-  icon: any
+  icon: string
   port: number
-  status: 'online' | 'offline' | 'building'
-  metrics: { label: string; value: string; trend?: string }[]
-  recentActivity: string
+  status: string
   activeUsers: number
+  recentActivity: string | null
+  metrics: { id: string; label: string; value: string; trend: string | null }[]
 }
-
-const platforms: PlatformStatus[] = [
-  {
-    id: 'eversense',
-    name: 'EverSense',
-    description: 'Time tracking, shoot logging & project execution',
-    color: '#5B9BD5',
-    icon: Clock,
-    port: 3200,
-    status: 'online',
-    metrics: [
-      { label: 'Hours Logged Today', value: '47.5h', trend: '+12%' },
-      { label: 'Active Shoots', value: '3' },
-      { label: 'Edits in Progress', value: '7' },
-    ],
-    recentActivity: 'Zac logged 3.5h on Meridian shoot',
-    activeUsers: 6,
-  },
-  {
-    id: 'hrsense',
-    name: 'HRSense',
-    description: 'Team management, payroll & performance',
-    color: '#9B59B6',
-    icon: Users,
-    port: 3300,
-    status: 'online',
-    metrics: [
-      { label: 'Team Members', value: '11' },
-      { label: 'Leave Requests', value: '2', trend: 'pending' },
-      { label: 'This Month Payroll', value: '$38.2K' },
-    ],
-    recentActivity: 'Gen submitted leave request for Apr 3-4',
-    activeUsers: 3,
-  },
-  {
-    id: 'jobsense',
-    name: 'JobSense',
-    description: 'Job execution hub — scheduling to delivery',
-    color: '#D4845A',
-    icon: Briefcase,
-    port: 3000,
-    status: 'online',
-    metrics: [
-      { label: 'Active Jobs', value: '10' },
-      { label: 'This Week Revenue', value: '$24.5K', trend: '+8%' },
-      { label: 'Jobs Delivered', value: '4' },
-    ],
-    recentActivity: 'AquaTech shoot uploaded — moving to edit',
-    activeUsers: 5,
-  },
-  {
-    id: 'contentsense',
-    name: 'ContentSense',
-    description: 'Content creation, creator analytics & approvals',
-    color: '#2ECC71',
-    icon: FileText,
-    port: 3400,
-    status: 'online',
-    metrics: [
-      { label: 'Posts Scheduled', value: '12' },
-      { label: 'Pending Approvals', value: '5' },
-      { label: 'Creator Sources', value: '24' },
-    ],
-    recentActivity: 'New weekly report generated for LinkedIn',
-    activeUsers: 4,
-  },
-  {
-    id: 'salesense',
-    name: 'SaleSense',
-    description: 'Sales pipeline, deals & client management',
-    color: '#E74C3C',
-    icon: TrendingUp,
-    port: 3500,
-    status: 'online',
-    metrics: [
-      { label: 'Open Deals', value: '8', trend: '+2' },
-      { label: 'Pipeline Value', value: '$142K' },
-      { label: 'Closing This Week', value: '3' },
-    ],
-    recentActivity: 'New deal created: Horizon Media — $18K',
-    activeUsers: 2,
-  },
-]
 
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, { bg: string; text: string; dot: string }> = {
@@ -138,10 +53,11 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 interface PlatformCardsProps {
+  platforms: PlatformData[]
   onNavigate: (platformId: string) => void
 }
 
-export default function PlatformCards({ onNavigate }: PlatformCardsProps) {
+export default function PlatformCards({ platforms, onNavigate }: PlatformCardsProps) {
   return (
     <div style={{
       display: 'grid',
@@ -149,11 +65,11 @@ export default function PlatformCards({ onNavigate }: PlatformCardsProps) {
       gap: 16,
     }}>
       {platforms.map((platform, index) => {
-        const Icon = platform.icon
+        const Icon = iconMap[platform.icon]
         return (
           <div
             key={platform.id}
-            onClick={() => onNavigate(platform.id)}
+            onClick={() => onNavigate(platform.slug)}
             style={{
               background: 'var(--bg-card)',
               border: '1px solid var(--border-primary)',
@@ -204,7 +120,7 @@ export default function PlatformCards({ onNavigate }: PlatformCardsProps) {
                   justifyContent: 'center',
                   color: platform.color,
                 }}>
-                  <Icon size={20} />
+                  {Icon && <Icon size={20} />}
                 </div>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: 15 }}>{platform.name}</div>
@@ -223,8 +139,8 @@ export default function PlatformCards({ onNavigate }: PlatformCardsProps) {
               gap: 12,
               marginBottom: 16,
             }}>
-              {platform.metrics.map((metric, i) => (
-                <div key={i} style={{
+              {platform.metrics.map((metric) => (
+                <div key={metric.id} style={{
                   background: 'var(--bg-tertiary)',
                   borderRadius: 8,
                   padding: '10px 12px',

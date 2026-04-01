@@ -8,18 +8,23 @@ import KPIOverview from './components/KPIOverview'
 import QuickActions from './components/QuickActions'
 import RevenueChart from './components/RevenueChart'
 import PlatformView from './components/PlatformView'
+import ExecutiveView from './components/ExecutiveView'
+import { useDashboardData } from './lib/useDashboardData'
 import {
   Bell,
   Search,
   Command,
   Calendar,
+  Loader2,
 } from 'lucide-react'
 
 export default function CommandCenter() {
   const [activeView, setActiveView] = useState('dashboard')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const { data, loading, error } = useDashboardData()
 
   const isPlatformView = ['eversense', 'hrsense', 'jobsense', 'contentsense', 'salesense'].includes(activeView)
+  const isExecutiveView = ['ceo', 'cfo', 'cmo', 'coo', 'cto', 'cro'].includes(activeView)
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -56,6 +61,8 @@ export default function CommandCenter() {
             <h1 style={{ fontSize: 18, fontWeight: 700 }}>
               {isPlatformView
                 ? activeView.charAt(0).toUpperCase() + activeView.slice(1).replace('sense', 'Sense')
+                : isExecutiveView
+                ? `${activeView.toUpperCase()} Dashboard`
                 : activeView === 'dashboard'
                 ? 'Dashboard'
                 : activeView.charAt(0).toUpperCase() + activeView.slice(1)
@@ -159,6 +166,31 @@ export default function CommandCenter() {
               platformId={activeView}
               onBack={() => setActiveView('dashboard')}
             />
+          ) : isExecutiveView ? (
+            <ExecutiveView roleId={activeView} />
+          ) : loading ? (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 400,
+              color: 'var(--text-muted)',
+              gap: 10,
+            }}>
+              <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
+              <span style={{ fontSize: 14 }}>Loading dashboard...</span>
+            </div>
+          ) : error ? (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 400,
+              color: 'var(--error)',
+              fontSize: 14,
+            }}>
+              Failed to load data: {error}
+            </div>
           ) : (
             <div className="fade-in">
               {/* KPIs */}
@@ -166,7 +198,7 @@ export default function CommandCenter() {
                 <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: 'var(--text-secondary)' }}>
                   Key Metrics
                 </h2>
-                <KPIOverview />
+                <KPIOverview kpis={data!.kpis} />
               </div>
 
               {/* Platform cards */}
@@ -174,7 +206,7 @@ export default function CommandCenter() {
                 <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: 'var(--text-secondary)' }}>
                   Platforms
                 </h2>
-                <PlatformCards onNavigate={setActiveView} />
+                <PlatformCards platforms={data!.platforms} onNavigate={setActiveView} />
               </div>
 
               {/* Bottom grid: Activity + Charts + Quick Actions */}
@@ -184,11 +216,14 @@ export default function CommandCenter() {
                 gap: 16,
                 marginBottom: 20,
               }}>
-                <RevenueChart />
+                <RevenueChart
+                  monthlyRevenue={data!.monthlyRevenue}
+                  weeklyBreakdown={data!.weeklyBreakdown}
+                />
                 <QuickActions />
               </div>
 
-              <ActivityFeed />
+              <ActivityFeed activities={data!.activities} />
             </div>
           )}
         </div>

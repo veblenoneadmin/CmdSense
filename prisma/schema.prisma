@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ─── Platforms ───────────────────────────────────────────────
+
+model Platform {
+  id          String   @id @default(cuid())
+  slug        String   @unique // e.g. "eversense"
+  name        String   // e.g. "EverSense"
+  description String
+  color       String
+  icon        String   // lucide icon name
+  port        Int
+  status      String   @default("online") // online | offline | building
+  activeUsers Int      @default(0)
+
+  metrics        PlatformMetric[]
+  recentActivity String?
+  activities     Activity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlatformMetric {
+  id         String   @id @default(cuid())
+  platformId String
+  platform   Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  label      String
+  value      String
+  trend      String?
+  sortOrder  Int      @default(0)
+
+  @@index([platformId])
+}
+
+// ─── KPIs ────────────────────────────────────────────────────
+
+model KPI {
+  id         String @id @default(cuid())
+  label      String
+  value      String
+  change     String
+  changeType String // up | down | neutral
+  icon       String // lucide icon name
+  color      String
+  subtext    String
+  sortOrder  Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Activity Feed ───────────────────────────────────────────
+
+model Activity {
+  id              String   @id @default(cuid())
+  platformId      String
+  platform        Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  title           String
+  description     String
+  type            String   // create | update | complete | alert | milestone
+  timestamp       String   // display string like "2 min ago"
+
+  createdAt DateTime @default(now())
+
+  @@index([platformId])
+  @@index([createdAt])
+}
+
+// ─── Revenue Data ────────────────────────────────────────────
+
+model MonthlyRevenue {
+  id      String @id @default(cuid())
+  month   String // e.g. "Oct", "Nov"
+  revenue Float
+  jobs    Int
+  content Int
+
+  @@unique([month])
+}
+
+model WeeklyBreakdown {
+  id           String @id @default(cuid())
+  week         String // e.g. "W1", "W2"
+  jobsense     Float
+  salesense    Float
+  contentsense Float
+
+  @@unique([week])
+}

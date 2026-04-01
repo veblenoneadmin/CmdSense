@@ -13,6 +13,12 @@ import {
   Zap,
   Bell,
   Search,
+  Crown,
+  DollarSign,
+  Megaphone,
+  Cog,
+  Code,
+  Target,
 } from 'lucide-react'
 
 const platforms = [
@@ -29,6 +35,15 @@ const navItems = [
   { id: 'search', label: 'Global Search', icon: Search },
   { id: 'automations', label: 'Automations', icon: Zap },
   { id: 'settings', label: 'Settings', icon: Settings },
+]
+
+const executives = [
+  { id: 'ceo', label: 'CEO', icon: Crown, color: '#F59E0B', description: 'Chief Executive' },
+  { id: 'cfo', label: 'CFO', icon: DollarSign, color: '#10B981', description: 'Chief Financial' },
+  { id: 'cmo', label: 'CMO', icon: Megaphone, color: '#8B5CF6', description: 'Chief Marketing' },
+  { id: 'coo', label: 'COO', icon: Cog, color: '#EC4899', description: 'Chief Operations' },
+  { id: 'cto', label: 'CTO', icon: Code, color: '#3B82F6', description: 'Chief Technology' },
+  { id: 'cro', label: 'CRO', icon: Target, color: '#EF4444', description: 'Chief Revenue' },
 ]
 
 interface SidebarProps {
@@ -228,6 +243,75 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }:
                   <div>{platform.label}</div>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 400 }}>
                     {platform.description}
+                  </div>
+                </div>
+              )}
+            </button>
+          )
+        })}
+
+        <div style={{
+          height: 1,
+          background: 'var(--border-primary)',
+          margin: '16px 12px',
+        }} />
+
+        <div style={{
+          fontSize: 10,
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          color: 'var(--text-muted)',
+          padding: '0 12px',
+          marginBottom: 8,
+          opacity: collapsed ? 0 : 1,
+          transition: 'opacity 0.2s',
+        }}>
+          Executive
+        </div>
+
+        {executives.map((exec) => {
+          const Icon = exec.icon
+          const isActive = activeView === exec.id
+          return (
+            <button
+              key={exec.id}
+              onClick={() => onNavigate(exec.id)}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: collapsed ? '10px 20px' : '10px 12px',
+                borderRadius: 8,
+                marginBottom: 2,
+                background: isActive ? `${exec.color}15` : 'transparent',
+                color: isActive ? exec.color : 'var(--text-secondary)',
+                fontSize: 13,
+                fontWeight: isActive ? 600 : 400,
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) e.currentTarget.style.background = 'var(--bg-hover)'
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <div style={{
+                width: 18,
+                height: 18,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <Icon size={18} />
+              </div>
+              {!collapsed && (
+                <div style={{ textAlign: 'left' }}>
+                  <div>{exec.label}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 400 }}>
+                    {exec.description}
                   </div>
                 </div>
               )}

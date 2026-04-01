@@ -1,147 +1,24 @@
 'use client'
 
-import {
-  Clock,
-  Users,
-  Briefcase,
-  FileText,
-  TrendingUp,
-} from 'lucide-react'
 import { useState } from 'react'
+import { iconMap } from '../lib/icons'
 
-interface ActivityItem {
+interface ActivityData {
   id: string
-  platform: string
-  platformColor: string
-  icon: any
   title: string
   description: string
+  type: string
   timestamp: string
-  type: 'create' | 'update' | 'complete' | 'alert' | 'milestone'
+  platform: {
+    name: string
+    color: string
+    icon: string
+  }
 }
 
-const activities: ActivityItem[] = [
-  {
-    id: '1',
-    platform: 'JobSense',
-    platformColor: '#D4845A',
-    icon: Briefcase,
-    title: 'AquaTech shoot uploaded',
-    description: 'Moving to edit phase — assigned to Jev',
-    timestamp: '2 min ago',
-    type: 'update',
-  },
-  {
-    id: '2',
-    platform: 'SaleSense',
-    platformColor: '#E74C3C',
-    icon: TrendingUp,
-    title: 'New deal created: Horizon Media',
-    description: 'Pipeline value: $18,000 — Full media package',
-    timestamp: '8 min ago',
-    type: 'create',
-  },
-  {
-    id: '3',
-    platform: 'ContentSense',
-    platformColor: '#2ECC71',
-    icon: FileText,
-    title: 'Weekly report generated',
-    description: 'LinkedIn performance report — 23% engagement increase',
-    timestamp: '15 min ago',
-    type: 'complete',
-  },
-  {
-    id: '4',
-    platform: 'EverSense',
-    platformColor: '#5B9BD5',
-    icon: Clock,
-    title: 'Zac logged 3.5h',
-    description: 'Meridian Hotel — Video shoot & setup',
-    timestamp: '22 min ago',
-    type: 'update',
-  },
-  {
-    id: '5',
-    platform: 'HRSense',
-    platformColor: '#9B59B6',
-    icon: Users,
-    title: 'Leave request submitted',
-    description: 'Gen — April 3-4, 2026 (Personal leave)',
-    timestamp: '35 min ago',
-    type: 'alert',
-  },
-  {
-    id: '6',
-    platform: 'JobSense',
-    platformColor: '#D4845A',
-    icon: Briefcase,
-    title: 'Botanica Gardens — Delivered',
-    description: 'Final deliverables sent. Awaiting client approval.',
-    timestamp: '1h ago',
-    type: 'complete',
-  },
-  {
-    id: '7',
-    platform: 'SaleSense',
-    platformColor: '#E74C3C',
-    icon: TrendingUp,
-    title: 'Summit Corp deal moved to Negotiation',
-    description: 'Proposal sent — $32K annual package',
-    timestamp: '1h ago',
-    type: 'update',
-  },
-  {
-    id: '8',
-    platform: 'ContentSense',
-    platformColor: '#2ECC71',
-    icon: FileText,
-    title: '3 posts pending approval',
-    description: 'Instagram Reels (2), YouTube Short (1)',
-    timestamp: '2h ago',
-    type: 'alert',
-  },
-  {
-    id: '9',
-    platform: 'EverSense',
-    platformColor: '#5B9BD5',
-    icon: Clock,
-    title: 'Hanif completed edit session',
-    description: 'CloudNine Fitness — 4.2h edit + color grade',
-    timestamp: '2h ago',
-    type: 'complete',
-  },
-  {
-    id: '10',
-    platform: 'JobSense',
-    platformColor: '#D4845A',
-    icon: Briefcase,
-    title: 'New job booked: Stellar Brands',
-    description: 'Video + photos package — $4,200 — Apr 7',
-    timestamp: '3h ago',
-    type: 'create',
-  },
-  {
-    id: '11',
-    platform: 'HRSense',
-    platformColor: '#9B59B6',
-    icon: Users,
-    title: 'Monthly performance reviews due',
-    description: 'Reminder: 11 team member reviews pending for March',
-    timestamp: '3h ago',
-    type: 'alert',
-  },
-  {
-    id: '12',
-    platform: 'ContentSense',
-    platformColor: '#2ECC71',
-    icon: FileText,
-    title: 'Creator source added: @designstudio.bali',
-    description: 'Instagram — Architecture & interior design niche',
-    timestamp: '4h ago',
-    type: 'create',
-  },
-]
+interface ActivityFeedProps {
+  activities: ActivityData[]
+}
 
 const typeStyles: Record<string, { bg: string; label: string }> = {
   create: { bg: 'rgba(74, 222, 128, 0.1)', label: 'New' },
@@ -159,12 +36,12 @@ const typeTextColors: Record<string, string> = {
   milestone: '#9B59B6',
 }
 
-export default function ActivityFeed() {
+export default function ActivityFeed({ activities }: ActivityFeedProps) {
   const [filter, setFilter] = useState<string>('all')
 
   const filteredActivities = filter === 'all'
     ? activities
-    : activities.filter(a => a.platform.toLowerCase().replace('sense', 'sense') === filter)
+    : activities.filter(a => a.platform.name === filter)
 
   const platformFilters = [
     { id: 'all', label: 'All', color: 'var(--accent)' },
@@ -219,8 +96,8 @@ export default function ActivityFeed() {
       {/* Activity list */}
       <div style={{ maxHeight: 520, overflowY: 'auto' }}>
         {filteredActivities.map((activity, index) => {
-          const Icon = activity.icon
-          const typeStyle = typeStyles[activity.type]
+          const Icon = iconMap[activity.platform.icon]
+          const typeStyle = typeStyles[activity.type] || typeStyles.update
           return (
             <div
               key={activity.id}
@@ -246,15 +123,15 @@ export default function ActivityFeed() {
                 width: 34,
                 height: 34,
                 borderRadius: 8,
-                background: `${activity.platformColor}15`,
+                background: `${activity.platform.color}15`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: activity.platformColor,
+                color: activity.platform.color,
                 flexShrink: 0,
                 marginTop: 1,
               }}>
-                <Icon size={16} />
+                {Icon && <Icon size={16} />}
               </div>
 
               {/* Content */}
@@ -267,7 +144,7 @@ export default function ActivityFeed() {
                     padding: '2px 6px',
                     borderRadius: 4,
                     background: typeStyle.bg,
-                    color: typeTextColors[activity.type],
+                    color: typeTextColors[activity.type] || '#999',
                   }}>
                     {typeStyle.label}
                   </span>
@@ -279,9 +156,9 @@ export default function ActivityFeed() {
                   <span style={{
                     fontSize: 10,
                     fontWeight: 600,
-                    color: activity.platformColor,
+                    color: activity.platform.color,
                   }}>
-                    {activity.platform}
+                    {activity.platform.name}
                   </span>
                   <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
                     {activity.timestamp}

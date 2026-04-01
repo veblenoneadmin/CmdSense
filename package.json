@@ -4,17 +4,29 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3100",
-    "build": "next build",
-    "start": "next start -p 3100"
+    "build": "npx prisma generate && next build",
+    "start": "next start -p 3100",
+    "db:push": "npx prisma db push",
+    "db:seed": "npx tsx prisma/seed.ts",
+    "db:setup": "npx prisma db push && npx tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/adapter-mariadb": "^7.6.0",
+    "@prisma/client": "^7.6.0",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "lucide-react": "^1.7.0",
+    "mariadb": "^3.5.2",
+    "mysql2": "^3.20.0",
     "next": "^16.2.1",
+    "prisma": "^7.6.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "recharts": "^3.8.1",
     "typescript": "^6.0.2"
+  },
+  "devDependencies": {
+    "dotenv": "^17.3.1",
+    "tsx": "^4.21.0"
   }
 }
