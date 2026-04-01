@@ -61,7 +61,7 @@ export default function PlatformCards({ platforms, onNavigate }: PlatformCardsPr
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+      gridTemplateColumns: 'repeat(3, 1fr)',
       gap: 16,
     }}>
       {platforms.map((platform, index) => {

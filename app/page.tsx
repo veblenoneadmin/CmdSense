@@ -169,7 +169,7 @@ export default function CommandCenter() {
             <ExecutiveView roleId={activeView} />
           ) : (
             <div className="fade-in">
-              {/* KPIs */}
+              {/* Row 1: KPIs */}
               <div style={{ marginBottom: 20 }}>
                 <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: 'var(--text-secondary)' }}>
                   Key Metrics
@@ -177,18 +177,10 @@ export default function CommandCenter() {
                 <KPIOverview kpis={data.kpis} />
               </div>
 
-              {/* Platform cards */}
-              <div style={{ marginBottom: 20 }}>
-                <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: 'var(--text-secondary)' }}>
-                  Platforms
-                </h2>
-                <PlatformCards platforms={data.platforms} onNavigate={setActiveView} />
-              </div>
-
-              {/* Bottom grid: Activity + Charts + Quick Actions */}
+              {/* Row 2: Revenue Chart + Quick Actions */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
+                gridTemplateColumns: '1.4fr 1fr',
                 gap: 16,
                 marginBottom: 20,
               }}>
@@ -199,6 +191,15 @@ export default function CommandCenter() {
                 <QuickActions />
               </div>
 
+              {/* Row 3: Platforms */}
+              <div style={{ marginBottom: 20 }}>
+                <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: 'var(--text-secondary)' }}>
+                  Platforms
+                </h2>
+                <PlatformCards platforms={data.platforms} onNavigate={setActiveView} />
+              </div>
+
+              {/* Row 4: Activity Feed */}
               <ActivityFeed activities={data.activities} />
             </div>
           )}

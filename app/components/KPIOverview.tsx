@@ -25,7 +25,7 @@ export default function KPIOverview({ kpis }: KPIOverviewProps) {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+      gridTemplateColumns: 'repeat(3, 1fr)',
       gap: 12,
     }}>
       {kpis.map((kpi, index) => {
